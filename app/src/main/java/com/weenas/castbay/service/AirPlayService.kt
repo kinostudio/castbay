@@ -46,8 +46,27 @@ class AirPlayService : Service() {
             field = value
             isReceiving = value
         }
-    private val stateCallback: (AirPlayConnectionState, StreamInfo, String?) -> Unit = { state, _, _ ->
+    private val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
+    @Volatile private var mirrorShownForSession = false
+    private val stateCallback: (AirPlayConnectionState, StreamInfo, String?) -> Unit = { state, stream, _ ->
         if (running) {
+            if (!AutoShowPolicy.isAirPlayVideo(state, stream)) {
+                mirrorShownForSession = false
+            } else if (!mirrorShownForSession) {
+                mirrorShownForSession = true
+                mainHandler.post {
+                    if (running && mirrorShownForSession && ReceiverSettingsStore(this).load().showMirrorOnConnect &&
+                        android.provider.Settings.canDrawOverlays(this)) {
+                        try {
+                            startActivity(Intent(this, MainActivity::class.java).addFlags(
+                                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            ))
+                        } catch (error: RuntimeException) {
+                            Log.w(TAG, "Could not bring mirroring display to the foreground", error)
+                        }
+                    }
+                }
+            }
             when (state) {
                 AirPlayConnectionState.AdvertisingOnly -> getSystemService(NotificationManager::class.java)
                     .notify(NOTIFICATION_ID, buildNotification(getString(com.weenas.castbay.R.string.notification_discoverable_only)))

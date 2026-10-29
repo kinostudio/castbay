@@ -7,3 +7,10 @@ On one Panasonic 4KTV-JUP running Android 11, the stock codec rejected unconditi
 The tested APK was `1.8.7-tw-panasonic.6`, SHA-256 `35665f03467e21acf38f7dfef874fe7f373c3ac49338875a7bb09aa74de5bdcf`. It was locally signed. The Kotlin/Java code was built from this revision; its unmodified ARM native libraries were taken from the verified upstream 1.8.7 release APK. Their hashes and upstream release link are in `native-provenance.json`. Native source and pinned dependencies remain in the upstream tree; built libraries and signing keys are not included here.
 
 For a normal source build, initialize the upstream submodules and follow the upstream build instructions. To reproduce the tested native-library route, place the matching `libcastbay_protocol.so` and `libc++_shared.so` from that verified APK under `airplay/src/main/jniLibs/{armeabi-v7a,arm64-v8a}/`, check all hashes against `native-provenance.json`, and run `./gradlew :app:assembleRelease :app:testDebugUnitTest :app:lintVitalRelease -PuseOfficialNativeLibs=true -Pcastbay.selfUpdate=false`. Build outputs depend on the signing key and toolchain. The tested build passed 165 unit tests and release lint.
+
+
+## AirPlay auto-display and screen awake (Panasonic fork 7)
+
+Optional setting: bring the receiver screen forward when AirPlay mirroring or AirPlay video starts. This requires user-granted display-over-other-apps permission; it is off by default. While video or mirroring is visible, the activity requests that Android keep the screen on, and releases that request afterwards. Vendor-specific power saving may differ.
+
+The owner reported successful testing of automatic display and keeping the screen awake on the Panasonic 4KTV-JUP. Local verification: 166 unit tests passed and release lint passed. The tested APK is independently signed and uses official 1.8.7 native libraries, not an upstream release.

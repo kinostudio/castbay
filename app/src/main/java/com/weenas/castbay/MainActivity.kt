@@ -123,6 +123,13 @@ private fun Screens() {
     // Only on the transition: opening Settings during a cast still works.
     val state by viewModel.state.collectAsState()
     val streaming = state.connectionState == com.weenas.castbay.service.AirPlayConnectionState.Streaming
+    // Keep the display awake while visible mirroring/video is active; restore normal sleep afterwards.
+    val activity = androidx.compose.ui.platform.LocalContext.current as? android.app.Activity
+    val keepVideoAwake = streaming && (state.streamInfo.isMirroring || state.streamInfo.isVideoPlayback) && !state.streamInfo.isAudioOnly
+    DisposableEffect(activity, keepVideoAwake) {
+        if (keepVideoAwake) activity?.window?.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        onDispose { if (keepVideoAwake) activity?.window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+    }
     LaunchedEffect(streaming) {
         if (streaming) currentScreen = "mirror"
     }

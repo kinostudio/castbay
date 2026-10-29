@@ -339,4 +339,6 @@
     <string name="stats_buffer">Buffer</string>
     <string name="stats_volume">Volume</string>
     <string name="stats_muted">muted</string>
+    <string name="setting_auto_show_mirror">Show AirPlay video automatically</string>
+    <string name="setting_auto_show_permission">When AirPlay mirroring or video starts, bring CastBay to the screen. Allow display over other apps in system settings.</string>
 </resources>

@@ -256,6 +256,20 @@ private fun ColumnScope.MirroringPage(settings: ReceiverSettings, viewModel: Air
 
 @Composable
 private fun ColumnScope.PlaybackPage(settings: ReceiverSettings, viewModel: AirPlayViewModel) {
+    val context = LocalContext.current
+    SwitchSetting(stringResource(R.string.setting_auto_show_mirror), settings.showMirrorOnConnect) { enabled ->
+        viewModel.updateSettings { it.copy(showMirrorOnConnect = enabled) }
+        if (enabled && !android.provider.Settings.canDrawOverlays(context)) {
+            try {
+                context.startActivity(android.content.Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    android.net.Uri.parse("package:" + context.packageName)))
+            } catch (_: android.content.ActivityNotFoundException) {
+                android.widget.Toast.makeText(context, context.getString(R.string.setting_auto_show_permission), android.widget.Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    Text(stringResource(R.string.setting_auto_show_permission), color = Color.Gray, fontSize = 14.sp)
+    CardDivider()
     SwitchSetting(stringResource(R.string.setting_stats), settings.showStats) { enabled ->
         viewModel.updateSettings { it.copy(showStats = enabled) }
     }

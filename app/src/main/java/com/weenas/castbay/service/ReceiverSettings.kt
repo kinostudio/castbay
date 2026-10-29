@@ -33,6 +33,8 @@ data class ReceiverSettings(
     val desktopEnabled: Boolean = true,
     /** Show a "stats for nerds" overlay (codec, resolution, bitrate, ...) while playing. */
     val showStats: Boolean = false,
+    /** Bring the display forward when an AirPlay mirror starts, if overlay access is granted. */
+    val showMirrorOnConnect: Boolean = false,
     /** How mirroring and AirPlay video fill the screen: [PICTURE_FIT], [PICTURE_FILL] or [PICTURE_STRETCH]. */
     val pictureMode: String = PICTURE_FIT,
     /** Look up and show synced lyrics for AirPlay music (sends the song's title to lrclib.net). */
@@ -85,7 +87,7 @@ data class ReceiverSettings(
         withoutLiveSettings() != previous.withoutLiveSettings()
 
     private fun withoutLiveSettings() = copy(
-        showStats = false, pictureMode = PICTURE_FIT, showLyrics = false, language = LANGUAGE_SYSTEM, checkUpdates = true, testVersions = false,
+        showStats = false, showMirrorOnConnect = false, pictureMode = PICTURE_FIT, showLyrics = false, language = LANGUAGE_SYSTEM, checkUpdates = true, testVersions = false,
         sendErrorReports = false, screenSaver = SCREEN_SAVER_BURN_IN
     )
 
@@ -162,6 +164,7 @@ class ReceiverSettingsStore(context: Context) {
         dlnaEnabled = preferences.getBoolean("dlna_enabled", true),
         desktopEnabled = preferences.getBoolean("desktop_enabled", true),
         showStats = preferences.getBoolean("show_stats", false),
+        showMirrorOnConnect = preferences.getBoolean("show_mirror_on_connect", false),
         pictureMode = preferences.getString("picture_mode", null)
             ?.takeIf { it in ReceiverSettings.PICTURE_MODES } ?: ReceiverSettings.PICTURE_FIT,
         showLyrics = preferences.getBoolean("show_lyrics", false),
@@ -211,6 +214,7 @@ class ReceiverSettingsStore(context: Context) {
             // Receiving can no longer be turned off (Back twice on the home screen quits).
             .remove("start_on_boot")
             .putBoolean("show_stats", settings.showStats)
+            .putBoolean("show_mirror_on_connect", settings.showMirrorOnConnect)
             .putString("picture_mode", settings.pictureMode)
             .putBoolean("show_lyrics", settings.showLyrics)
             .putString("language", settings.language)

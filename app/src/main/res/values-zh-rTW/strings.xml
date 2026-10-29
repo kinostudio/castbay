@@ -341,4 +341,6 @@
     <string name="stats_buffer">緩衝</string>
     <string name="stats_volume">音量</string>
     <string name="stats_muted">靜音</string>
+    <string name="setting_auto_show_mirror">AirPlay 投放時自動顯示畫面</string>
+    <string name="setting_auto_show_permission">開始 AirPlay 鏡像或影片時切換到映灣畫面；請在系統設定允許顯示於其他應用程式上層。</string>
 </resources>

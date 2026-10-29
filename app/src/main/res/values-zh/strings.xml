@@ -341,4 +341,6 @@
     <string name="stats_buffer">缓冲</string>
     <string name="stats_volume">音量</string>
     <string name="stats_muted">静音</string>
+    <string name="setting_auto_show_mirror">AirPlay 投屏时自动显示画面</string>
+    <string name="setting_auto_show_permission">开始 AirPlay 镜像或影片时切换到映湾画面。请在系统设置允许显示在其他应用上层。</string>
 </resources>
